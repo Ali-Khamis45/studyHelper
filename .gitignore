@@ -1,0 +1,37 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+backend/**/TestResults/
+*.dbmdl
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.turbo/
+frontend/next-env.d.ts
+frontend/*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+frontend/.env.local
+
+# Editor / OS
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Docker volumes (bind-mounted data, if any)
+infra/.data/
+
+# Logs
+*.log
+npm-debug.log*
