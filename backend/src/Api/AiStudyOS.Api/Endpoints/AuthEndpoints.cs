@@ -5,6 +5,7 @@ using AiStudyOS.Application.Identity.Commands.RegisterUser;
 using AiStudyOS.Application.Identity.Dtos;
 using AiStudyOS.Application.Identity.Queries.GetMe;
 using Mediator;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AiStudyOS.Api.Endpoints;
 
@@ -25,14 +26,14 @@ public static class AuthEndpoints
             var result = await mediator.Send(new RegisterUserCommand(request.Email, request.Password, request.DisplayName, GetClientIp(http)), ct);
             SetRefreshCookie(http, result.RefreshToken, result.RefreshTokenExpiresAtUtc);
             return Results.Created("/api/v1/auth/me", ToResponse(result));
-        }).AllowAnonymous();
+        }).AllowAnonymous().RequireRateLimiting("auth");
 
         group.MapPost("/login", async (LoginRequest request, IMediator mediator, HttpContext http, CancellationToken ct) =>
         {
             var result = await mediator.Send(new LoginUserCommand(request.Email, request.Password, GetClientIp(http)), ct);
             SetRefreshCookie(http, result.RefreshToken, result.RefreshTokenExpiresAtUtc);
             return Results.Ok(ToResponse(result));
-        }).AllowAnonymous();
+        }).AllowAnonymous().RequireRateLimiting("auth");
 
         group.MapPost("/refresh", async (IMediator mediator, HttpContext http, CancellationToken ct) =>
         {
@@ -43,7 +44,7 @@ public static class AuthEndpoints
             var result = await mediator.Send(new RefreshTokenCommand(rawToken, GetClientIp(http)), ct);
             SetRefreshCookie(http, result.RefreshToken, result.RefreshTokenExpiresAtUtc);
             return Results.Ok(ToResponse(result));
-        }).AllowAnonymous();
+        }).AllowAnonymous().RequireRateLimiting("auth");
 
         group.MapPost("/logout", async (IMediator mediator, HttpContext http, CancellationToken ct) =>
         {

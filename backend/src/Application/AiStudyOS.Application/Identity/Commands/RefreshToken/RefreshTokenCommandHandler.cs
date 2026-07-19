@@ -5,6 +5,7 @@ using AiStudyOS.Application.Identity.Dtos;
 using AiStudyOS.Application.Identity.Services;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace AiStudyOS.Application.Identity.Commands.RefreshToken;
@@ -15,7 +16,8 @@ public class RefreshTokenCommandHandler(
     IApplicationDbContext db,
     IJwtTokenService jwtTokenService,
     IDateTimeProvider dateTimeProvider,
-    IOptions<JwtOptions> jwtOptions) : ICommandHandler<RefreshTokenCommand, AuthResultDto>
+    IOptions<JwtOptions> jwtOptions,
+    ILogger<RefreshTokenCommandHandler> logger) : ICommandHandler<RefreshTokenCommand, AuthResultDto>
 {
     public async ValueTask<AuthResultDto> Handle(RefreshTokenCommand command, CancellationToken cancellationToken)
     {
@@ -33,6 +35,12 @@ public class RefreshTokenCommandHandler(
             foreach (var token in family)
                 token.Revoke(now);
             await db.SaveChangesAsync(cancellationToken);
+
+            // The strongest signal of token theft in this system: a refresh token that was
+            // already rotated away is being presented again. Worth a Warning, not Information.
+            logger.LogWarning(
+                "Refresh token reuse detected for user {UserId}, family {FamilyId} revoked entirely",
+                existingToken.UserId, existingToken.FamilyId);
 
             throw new InvalidRefreshTokenException("reuse detected — token family revoked");
         }

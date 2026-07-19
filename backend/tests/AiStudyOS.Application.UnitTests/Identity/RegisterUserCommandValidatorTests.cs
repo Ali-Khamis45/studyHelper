@@ -1,12 +1,14 @@
+using AiStudyOS.Application.Common.Options;
 using AiStudyOS.Application.Identity.Commands.RegisterUser;
 using FluentAssertions;
 using FluentValidation.TestHelper;
+using Microsoft.Extensions.Options;
 
 namespace AiStudyOS.Application.UnitTests.Identity;
 
 public class RegisterUserCommandValidatorTests
 {
-    private readonly RegisterUserCommandValidator _validator = new();
+    private readonly RegisterUserCommandValidator _validator = new(Options.Create(new PasswordPolicyOptions()));
 
     [Theory]
     [InlineData("not-an-email")]
@@ -43,5 +45,15 @@ public class RegisterUserCommandValidatorTests
         var result = _validator.TestValidate(new RegisterUserCommand("user@example.com", "a-valid-password1", "Name", "127.0.0.1"));
 
         result.ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public void Minimum_length_is_configurable()
+    {
+        var strictValidator = new RegisterUserCommandValidator(Options.Create(new PasswordPolicyOptions { MinimumLength = 16 }));
+
+        var result = strictValidator.TestValidate(new RegisterUserCommand("user@example.com", "short-but-8+", "Name", null));
+
+        result.ShouldHaveValidationErrorFor(x => x.Password);
     }
 }

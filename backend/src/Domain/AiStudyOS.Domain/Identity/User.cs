@@ -13,6 +13,8 @@ public class User : AggregateRoot
     public string TimeZone { get; private set; } = "UTC";
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime UpdatedAtUtc { get; private set; }
+    public int FailedLoginAttempts { get; private set; }
+    public DateTime? LockedOutUntilUtc { get; private set; }
 
     private User() { }
 
@@ -57,5 +59,21 @@ public class User : AggregateRoot
         AvatarUrl ??= avatarUrl;
         EmailVerified = true;
         UpdatedAtUtc = DateTime.UtcNow;
+    }
+
+    public bool IsLockedOut(DateTime nowUtc) => LockedOutUntilUtc is { } until && until > nowUtc;
+
+    public void RegisterFailedLogin(DateTime nowUtc, int maxAttempts, TimeSpan lockoutDuration)
+    {
+        FailedLoginAttempts++;
+        if (FailedLoginAttempts >= maxAttempts)
+            LockedOutUntilUtc = nowUtc.Add(lockoutDuration);
+    }
+
+    public void RegisterSuccessfulLogin(DateTime nowUtc)
+    {
+        FailedLoginAttempts = 0;
+        LockedOutUntilUtc = null;
+        UpdatedAtUtc = nowUtc;
     }
 }

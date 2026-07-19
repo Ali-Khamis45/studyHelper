@@ -16,6 +16,11 @@ public class AuthApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithPassword("test-password")
         .Build();
 
+    // Override point for subclasses (e.g. a rate-limit test factory that needs a much lower
+    // threshold than the shared default) to layer extra config on top without duplicating the
+    // Postgres/JWT setup below.
+    protected virtual IReadOnlyDictionary<string, string?> AdditionalConfiguration => new Dictionary<string, string?>();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Development");
@@ -30,6 +35,7 @@ public class AuthApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
                 ["Jwt:AccessTokenLifetimeMinutes"] = "15",
                 ["Jwt:RefreshTokenLifetimeDays"] = "21",
             });
+            config.AddInMemoryCollection(AdditionalConfiguration);
         });
     }
 

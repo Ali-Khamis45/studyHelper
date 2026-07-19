@@ -16,11 +16,12 @@ public class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenService
         var jwt = options.Value;
         var expiresAtUtc = DateTime.UtcNow.AddMinutes(jwt.AccessTokenLifetimeMinutes);
 
+        // Minimum-claims by design: the only consumer (CurrentUserService) reads `sub`, and
+        // GetMeQueryHandler re-fetches the user from the DB rather than trusting token claims —
+        // email/name in the token would just be unused PII exposed to anyone who decodes it.
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Name, user.DisplayName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
