@@ -11,7 +11,7 @@ public static class RecommendationAgentDefinition
         Type: AgentType.Recommendation,
         Name: "Recommendation Agent",
         SystemPrompt: new PromptRef(AgentType.Recommendation, Version: "v1"),
-        ContextProviders: [typeof(GoalContextProvider), typeof(TaskContextProvider)],
+        ContextProviders: [typeof(GoalContextProvider), typeof(TaskContextProvider), typeof(TimeOfDayContextProvider)],
         ToolNames: ["planner"],
         MemoryAccess: new MemoryAccessPolicy(CanRead: false, CanWrite: false),
         ExpectedOutputSchema: typeof(RecommendationResult),

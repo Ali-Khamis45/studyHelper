@@ -13,4 +13,4 @@ public record RecommendationResult(
     string RecommendationReason,
     IReadOnlyList<RecommendedTaskResult> Tasks);
 
-public record RecommendedTaskResult(Guid? GoalId, string Title, string Reasoning, int EstimatedMinutes);
+public record RecommendedTaskResult(Guid? GoalId, string Title, string Reasoning, int EstimatedMinutes, string? EnergyLevel);

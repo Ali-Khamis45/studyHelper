@@ -2,6 +2,7 @@ using AiStudyOS.Application.Common.Exceptions;
 using AiStudyOS.Application.Common.Interfaces;
 using AiStudyOS.Application.Common.Options;
 using AiStudyOS.Application.Planner.Dtos;
+using AiStudyOS.Domain.Planner;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -14,7 +15,8 @@ public class GetWeekQueryHandler(IApplicationDbContext db, ICurrentUserService c
     {
         var userId = currentUser.UserId ?? throw new InvalidCredentialsException();
         var today = DateOnly.FromDateTime(dateTimeProvider.UtcNow);
-        var rangeEnd = today.AddDays(plannerOptions.Value.WeekViewDays - 1);
+        var options = plannerOptions.Value;
+        var rangeEnd = today.AddDays(options.WeekViewDays - 1);
 
         var tasks = await db.DailyTasks
             .Where(t => t.UserId == userId && t.Date >= today && t.Date <= rangeEnd)
@@ -23,19 +25,24 @@ public class GetWeekQueryHandler(IApplicationDbContext db, ICurrentUserService c
 
         var goalTitles = await PlannerQueryHelpers.GetGoalTitlesAsync(db, userId, tasks.Select(t => t.GoalId), ct);
 
-        var days = Enumerable.Range(0, plannerOptions.Value.WeekViewDays)
+        var days = Enumerable.Range(0, options.WeekViewDays)
             .Select(offset =>
             {
                 var date = today.AddDays(offset);
-                var dayTasks = tasks
-                    .Where(t => t.Date == date)
-                    .Select(t => DailyTaskDto.FromDomain(t, t.GoalId is { } id ? goalTitles.GetValueOrDefault(id) : null))
+                var dayTasks = tasks.Where(t => t.Date == date).ToList();
+                var dayTaskDtos = dayTasks
+                    .Select(t => DailyTaskDto.FromDomain(t, t.GoalId is { } id ? goalTitles.GetValueOrDefault(id) : null, today))
                     .ToList();
+                var totalMinutes = dayTasks.Sum(t => t.EstimatedMinutes);
 
-                return new WeekDayDto(date, dayTasks);
+                return new WeekDayDto(date, dayTaskDtos, totalMinutes, totalMinutes > options.DailyWorkloadThresholdMinutes);
             })
             .ToList();
 
-        return new WeekDto(days);
+        var weeklyCompletionPercent = tasks.Count == 0
+            ? 0
+            : Math.Round(100.0 * tasks.Count(t => t.Status == DailyTaskStatus.Completed) / tasks.Count, 1);
+
+        return new WeekDto(days, weeklyCompletionPercent);
     }
 }

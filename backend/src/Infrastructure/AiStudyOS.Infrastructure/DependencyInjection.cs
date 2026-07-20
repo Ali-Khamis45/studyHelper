@@ -144,6 +144,7 @@ public static class DependencyInjection
         // AgentDefinition.ContextProviders entry), so each must be registered by its own type.
         services.AddScoped<GoalContextProvider>();
         services.AddScoped<TaskContextProvider>();
+        services.AddScoped<TimeOfDayContextProvider>();
         services.AddScoped<IContextBuilder, ContextBuilder>();
 
         services.AddScoped<ITool, PlannerTool>();

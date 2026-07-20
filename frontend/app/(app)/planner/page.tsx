@@ -3,6 +3,9 @@
 import { AiStatusBadge } from "@/components/planner/AiStatusBadge";
 import { DailyLoopCard } from "@/components/planner/DailyLoopCard";
 import { GoalProgressList } from "@/components/planner/GoalProgressList";
+import { OverdueTasksCard } from "@/components/planner/OverdueTasksCard";
+import { PlannerStatsCards } from "@/components/planner/PlannerStatsCards";
+import { RecommendationHistoryCard } from "@/components/planner/RecommendationHistoryCard";
 import { TaskItem } from "@/components/planner/TaskItem";
 import { UpcomingDeadlines } from "@/components/planner/UpcomingDeadlines";
 import { WeekView } from "@/components/planner/WeekView";
@@ -30,6 +33,7 @@ export default function PlannerPage() {
       {planLoading && (
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="flex flex-col gap-4 lg:col-span-2">
+            <Skeleton className="h-24 rounded-xl" />
             <Skeleton className="h-56 rounded-xl" />
             <Skeleton className="h-40 rounded-xl" />
           </div>
@@ -45,29 +49,40 @@ export default function PlannerPage() {
       )}
 
       {plan && (
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="flex flex-col gap-4 lg:col-span-2">
-            <DailyLoopCard recommendation={plan.recommendation} />
+        <>
+          <PlannerStatsCards
+            studyStreak={plan.studyStreak}
+            dailyFocusScore={plan.dailyFocusScore}
+            dailyCompletionPercent={plan.dailyCompletionPercent}
+          />
 
-            <div>
-              <h2 className="mb-3 text-sm font-medium text-muted-foreground">Today&apos;s tasks</h2>
-              {plan.tasks.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No tasks for today yet.</p>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {plan.tasks.map((task) => (
-                    <TaskItem key={task.id} task={task} />
-                  ))}
-                </div>
-              )}
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="flex flex-col gap-4 lg:col-span-2">
+              {plan.overdueTasks.length > 0 && <OverdueTasksCard tasks={plan.overdueTasks} />}
+
+              <DailyLoopCard recommendation={plan.recommendation} />
+
+              <div>
+                <h2 className="mb-3 text-sm font-medium text-muted-foreground">Today&apos;s tasks</h2>
+                {plan.tasks.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No tasks for today yet.</p>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {plan.tasks.map((task) => (
+                      <TaskItem key={task.id} task={task} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <UpcomingDeadlines deadlines={plan.upcomingDeadlines} />
+              {activeGoals && <GoalProgressList goals={activeGoals} />}
+              <RecommendationHistoryCard />
             </div>
           </div>
-
-          <div className="flex flex-col gap-4">
-            <UpcomingDeadlines deadlines={plan.upcomingDeadlines} />
-            {activeGoals && <GoalProgressList goals={activeGoals} />}
-          </div>
-        </div>
+        </>
       )}
 
       {weekLoading ? <Skeleton className="h-48 rounded-xl" /> : week && <WeekView week={week} />}

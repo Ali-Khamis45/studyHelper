@@ -1,7 +1,9 @@
 using AiStudyOS.Application.Planner.Commands.CompleteTask;
 using AiStudyOS.Application.Planner.Commands.GenerateDailyRecommendation;
+using AiStudyOS.Application.Planner.Commands.RescheduleOverdueTasks;
 using AiStudyOS.Application.Planner.Commands.RescheduleTask;
 using AiStudyOS.Application.Planner.Commands.SkipTask;
+using AiStudyOS.Application.Planner.Queries.GetRecommendationHistory;
 using AiStudyOS.Application.Planner.Queries.GetToday;
 using AiStudyOS.Application.Planner.Queries.GetWeek;
 using AiStudyOS.Application.Planner.Streaming;
@@ -59,6 +61,18 @@ public static class PlannerEndpoints
         {
             var week = await mediator.Send(new GetWeekQuery(), ct);
             return Results.Ok(week);
+        });
+
+        group.MapGet("/recommendations/history", async (IMediator mediator, CancellationToken ct) =>
+        {
+            var history = await mediator.Send(new GetRecommendationHistoryQuery(), ct);
+            return Results.Ok(history);
+        });
+
+        group.MapPost("/tasks/reschedule-overdue", async (IMediator mediator, CancellationToken ct) =>
+        {
+            var result = await mediator.Send(new RescheduleOverdueTasksCommand(), ct);
+            return Results.Ok(result);
         });
 
         group.MapPatch("/tasks/{id:guid}/complete", async (Guid id, IMediator mediator, CancellationToken ct) =>

@@ -1,5 +1,6 @@
 export type DailyTaskStatus = "Pending" | "Completed" | "Skipped";
 export type TaskSource = "AiGenerated" | "Manual";
+export type EnergyLevel = "Low" | "Medium" | "High";
 
 export interface DailyTask {
   id: string;
@@ -11,6 +12,8 @@ export interface DailyTask {
   estimatedMinutes: number;
   status: DailyTaskStatus;
   source: TaskSource;
+  energyLevel: EnergyLevel | null;
+  isOverdue: boolean;
   completedAtUtc: string | null;
 }
 
@@ -43,15 +46,26 @@ export interface TodayPlan {
   recommendation: PlannerRecommendation | null;
   tasks: DailyTask[];
   upcomingDeadlines: UpcomingDeadline[];
+  overdueTasks: DailyTask[];
+  dailyCompletionPercent: number;
+  dailyFocusScore: number;
+  studyStreak: number;
 }
 
 export interface WeekDay {
   date: string;
   tasks: DailyTask[];
+  totalEstimatedMinutes: number;
+  isOverloaded: boolean;
 }
 
 export interface Week {
   days: WeekDay[];
+  weeklyCompletionPercent: number;
+}
+
+export interface RescheduleOverdueTasksResult {
+  rescheduledCount: number;
 }
 
 export type RecommendationStreamEvent =

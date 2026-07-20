@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarClock, Check, Clock, SkipForward } from "lucide-react";
+import { BatteryLow, BatteryMedium, BatteryFull, CalendarClock, Check, Clock, SkipForward } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCompleteTask, useRescheduleTask, useSkipTask } from "@/lib/hooks/usePlanner";
-import type { DailyTask } from "@/lib/types/planner";
+import type { DailyTask, EnergyLevel } from "@/lib/types/planner";
 import { cn } from "@/lib/utils";
+
+const ENERGY_ICON: Record<EnergyLevel, typeof BatteryLow> = {
+  Low: BatteryLow,
+  Medium: BatteryMedium,
+  High: BatteryFull,
+};
 
 export function TaskItem({ task }: { task: DailyTask }) {
   const [isRescheduling, setIsRescheduling] = useState(false);
@@ -27,6 +33,7 @@ export function TaskItem({ task }: { task: DailyTask }) {
           <p className={cn("text-sm font-medium", !isPending && "text-muted-foreground line-through")}>{task.title}</p>
           {task.status === "Completed" && <Badge variant="secondary">Completed</Badge>}
           {task.status === "Skipped" && <Badge variant="outline">Skipped</Badge>}
+          {task.isOverdue && <Badge variant="destructive">Overdue</Badge>}
         </div>
         {task.reasoning && <p className="text-xs text-muted-foreground">{task.reasoning}</p>}
         <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -34,6 +41,15 @@ export function TaskItem({ task }: { task: DailyTask }) {
             <Clock className="size-3" />
             {task.estimatedMinutes} min
           </span>
+          {task.energyLevel && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground" title={`${task.energyLevel} cognitive load`}>
+              {(() => {
+                const EnergyIcon = ENERGY_ICON[task.energyLevel];
+                return <EnergyIcon className="size-3" />;
+              })()}
+              {task.energyLevel}
+            </span>
+          )}
           {task.goalTitle && <Badge variant="outline">{task.goalTitle}</Badge>}
         </div>
       </div>

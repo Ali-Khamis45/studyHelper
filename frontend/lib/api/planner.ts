@@ -1,6 +1,12 @@
 import { API_BASE_URL, ApiError, apiFetch } from "@/lib/api/client";
 import { useAuthStore } from "@/lib/stores/authStore";
-import type { RecommendationStreamEvent, TodayPlan, Week } from "@/lib/types/planner";
+import type {
+  PlannerRecommendation,
+  RecommendationStreamEvent,
+  RescheduleOverdueTasksResult,
+  TodayPlan,
+  Week,
+} from "@/lib/types/planner";
 
 export function getToday() {
   return apiFetch<TodayPlan>("/api/v1/planner/today");
@@ -64,4 +70,12 @@ export function skipTask(taskId: string) {
 
 export function rescheduleTask(taskId: string, newDate: string) {
   return apiFetch<void>(`/api/v1/planner/tasks/${taskId}/reschedule`, { method: "PATCH", body: { newDate } });
+}
+
+export function rescheduleOverdueTasks() {
+  return apiFetch<RescheduleOverdueTasksResult>("/api/v1/planner/tasks/reschedule-overdue", { method: "POST" });
+}
+
+export function getRecommendationHistory() {
+  return apiFetch<PlannerRecommendation[]>("/api/v1/planner/recommendations/history");
 }

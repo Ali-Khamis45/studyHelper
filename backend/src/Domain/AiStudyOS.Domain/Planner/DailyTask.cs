@@ -12,6 +12,7 @@ public class DailyTask : Entity
     public int EstimatedMinutes { get; private set; }
     public DailyTaskStatus Status { get; private set; }
     public TaskSource Source { get; private set; }
+    public EnergyLevel? EnergyLevel { get; private set; }
     public DateTime? CompletedAtUtc { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime UpdatedAtUtc { get; private set; }
@@ -26,7 +27,8 @@ public class DailyTask : Entity
         DateOnly date,
         int estimatedMinutes,
         TaskSource source,
-        DateTime nowUtc)
+        DateTime nowUtc,
+        EnergyLevel? energyLevel = null)
     {
         return new DailyTask
         {
@@ -38,6 +40,7 @@ public class DailyTask : Entity
             EstimatedMinutes = estimatedMinutes,
             Status = DailyTaskStatus.Pending,
             Source = source,
+            EnergyLevel = energyLevel,
             CreatedAtUtc = nowUtc,
             UpdatedAtUtc = nowUtc,
         };

@@ -70,12 +70,19 @@ public class PlannerTool(IApplicationDbContext db, IDateTimeProvider dateTimePro
         var estimatedMinutes = parameters.GetValueOrDefault("estimatedMinutes") is int minutes ? minutes : 30;
         var source = parameters.GetValueOrDefault("source") is TaskSource s ? s : TaskSource.Manual;
 
+        // The AI's own free-text estimate of cognitive load — parsed defensively; an unrecognized
+        // or absent value just means no energy tag on the task, never a failed task creation.
+        EnergyLevel? energyLevel = parameters.GetValueOrDefault("energyLevel") is string energyLevelText
+            && Enum.TryParse<EnergyLevel>(energyLevelText, ignoreCase: true, out var parsedEnergyLevel)
+                ? parsedEnergyLevel
+                : null;
+
         // Defensive: an AI-supplied goalId that doesn't belong to this user gets dropped rather
         // than failing the whole task — a slightly-wrong link shouldn't block an otherwise valid task.
         if (goalId is not null && !await db.Goals.AnyAsync(g => g.Id == goalId && g.UserId == invocation.UserId, ct))
             goalId = null;
 
-        var task = DailyTask.Create(invocation.UserId, goalId, title, reasoning, date, estimatedMinutes, source, dateTimeProvider.UtcNow);
+        var task = DailyTask.Create(invocation.UserId, goalId, title, reasoning, date, estimatedMinutes, source, dateTimeProvider.UtcNow, energyLevel);
         db.DailyTasks.Add(task);
         await db.SaveChangesAsync(ct);
 

@@ -46,6 +46,7 @@ public static class RecommendationFinalizer
                     ["goalId"] = proposedTask.GoalId,
                     ["reasoning"] = proposedTask.Reasoning,
                     ["estimatedMinutes"] = proposedTask.EstimatedMinutes,
+                    ["energyLevel"] = proposedTask.EnergyLevel,
                     ["source"] = TaskSource.AiGenerated,
                 }),
                 ct);

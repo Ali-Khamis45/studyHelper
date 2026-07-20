@@ -17,6 +17,7 @@ public class DailyTaskConfiguration : IEntityTypeConfiguration<DailyTask>
         builder.Property(t => t.Reasoning).HasMaxLength(1000);
         builder.Property(t => t.Status).IsRequired().HasConversion<string>().HasMaxLength(32);
         builder.Property(t => t.Source).IsRequired().HasConversion<string>().HasMaxLength(32);
+        builder.Property(t => t.EnergyLevel).HasConversion<string>().HasMaxLength(16);
 
         builder.HasIndex(t => new { t.UserId, t.Date });
 

@@ -6,8 +6,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   completeTask,
   generateRecommendation,
+  getRecommendationHistory,
   getToday,
   getWeek,
+  rescheduleOverdueTasks,
   rescheduleTask,
   skipTask,
   streamRecommendation,
@@ -88,4 +90,13 @@ export function useRescheduleTask() {
     mutationFn: ({ taskId, newDate }: { taskId: string; newDate: string }) => rescheduleTask(taskId, newDate),
     onSuccess: invalidate,
   });
+}
+
+export function useRescheduleOverdueTasks() {
+  const invalidate = useInvalidatePlannerAndGoals();
+  return useMutation({ mutationFn: rescheduleOverdueTasks, onSuccess: invalidate });
+}
+
+export function useRecommendationHistory() {
+  return useQuery({ queryKey: ["planner", "history"], queryFn: getRecommendationHistory });
 }

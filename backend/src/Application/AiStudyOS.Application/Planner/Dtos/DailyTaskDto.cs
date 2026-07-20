@@ -12,9 +12,11 @@ public record DailyTaskDto(
     int EstimatedMinutes,
     string Status,
     string Source,
+    string? EnergyLevel,
+    bool IsOverdue,
     DateTime? CompletedAtUtc)
 {
-    public static DailyTaskDto FromDomain(DailyTask task, string? goalTitle) => new(
+    public static DailyTaskDto FromDomain(DailyTask task, string? goalTitle, DateOnly today) => new(
         task.Id,
         task.GoalId,
         goalTitle,
@@ -24,5 +26,7 @@ public record DailyTaskDto(
         task.EstimatedMinutes,
         task.Status.ToString(),
         task.Source.ToString(),
+        task.EnergyLevel?.ToString(),
+        task.Status == DailyTaskStatus.Pending && task.Date < today,
         task.CompletedAtUtc);
 }
