@@ -14,7 +14,15 @@ public record KernelRequest(
 
 public record KernelResult<T>(T? Data, bool Success, string RawContent, AiTelemetryRecord Telemetry, IReadOnlyList<string> Errors);
 
-public record KernelStreamChunk(string DeltaContent, bool IsFinal);
+/// <summary>
+/// One chunk of a streaming execution. Non-final chunks only ever carry DeltaContent. The final
+/// chunk carries a KernelResult&lt;T&gt; — the exact same shape ExecuteAsync returns — because
+/// streaming and non-streaming go through the same parse/validate/telemetry pipeline internally;
+/// the only real difference is that streaming also yields text as it arrives.
+/// </summary>
+public record KernelStreamChunk<T>(string DeltaContent, bool IsFinal, KernelResult<T>? Result = null);
+
+public record AiHealthResult(string Provider, string Model, bool IsHealthy, long LatencyMs, string? Message);
 
 /// <summary>
 /// The only component in Application/Infrastructure that ever talks to an AI provider adapter.
@@ -24,5 +32,11 @@ public record KernelStreamChunk(string DeltaContent, bool IsFinal);
 public interface IAiKernel
 {
     Task<KernelResult<T>> ExecuteAsync<T>(KernelRequest request, CancellationToken ct);
-    IAsyncEnumerable<KernelStreamChunk> ExecuteStreamAsync(KernelRequest request, CancellationToken ct);
+    IAsyncEnumerable<KernelStreamChunk<T>> ExecuteStreamAsync<T>(KernelRequest request, CancellationToken ct);
+
+    /// <summary>
+    /// Lightweight real connectivity check against the configured provider — does not invoke the
+    /// model. Never throws: failures surface as a non-healthy AiHealthResult.
+    /// </summary>
+    Task<AiHealthResult> CheckHealthAsync(CancellationToken ct);
 }

@@ -3,7 +3,7 @@ using AiStudyOS.Domain.Mentor;
 namespace AiStudyOS.Application.AI.Telemetry;
 
 public record AiTelemetryRecord(
-    Guid CorrelationId,
+    string CorrelationId,
     AgentType AgentType,
     string ProviderKey,
     string Model,
@@ -17,7 +17,12 @@ public record AiTelemetryRecord(
     int ToolCallCount,
     bool Success,
     string? ErrorType,
-    DateTime CreatedAtUtc);
+    DateTime CreatedAtUtc,
+    bool Stream = false,
+    bool Cached = false,
+    string? CircuitBreakerState = null,
+    long? ResponseSizeBytes = null,
+    string? CancellationReason = null);
 
 public interface IAiTelemetryRecorder
 {

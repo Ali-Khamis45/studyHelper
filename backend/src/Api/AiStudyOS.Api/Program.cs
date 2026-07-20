@@ -92,6 +92,11 @@ builder.Services.AddMediator(options =>
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+// Enums over the wire as their names ("Certification", "High"), not raw ints — applies to both
+// Minimal API request/response bodies and anything serialized through ASP.NET Core's JSON options.
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
+
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -99,6 +104,7 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseSecurityHeaders();
+app.UseCorrelationId();
 
 // HSTS is meaningless (and wrong) to send over local http dev — only applies once behind real TLS.
 if (!app.Environment.IsDevelopment())
@@ -120,6 +126,9 @@ app.UseRateLimiter();
 
 app.MapHealthEndpoints();
 app.MapAuthEndpoints();
+app.MapGoalsEndpoints();
+app.MapPlannerEndpoints();
+app.MapSystemEndpoints();
 
 app.Run();
 

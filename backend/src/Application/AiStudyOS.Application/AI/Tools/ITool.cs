@@ -14,5 +14,6 @@ public interface ITool
 {
     string Name { get; }
     string Description { get; }
+    IReadOnlyList<AgentType> AllowedAgents { get; }
     Task<ToolResult> ExecuteAsync(ToolInvocation invocation, CancellationToken ct);
 }

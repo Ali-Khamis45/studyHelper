@@ -22,6 +22,67 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("AiStudyOS.Domain.Goals.Goal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("category");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("priority");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("status");
+
+                    b.Property<DateOnly?>("TargetDate")
+                        .HasColumnType("date")
+                        .HasColumnName("target_date");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_goals");
+
+                    b.HasIndex("UserId", "Status")
+                        .HasDatabaseName("ix_goals_user_id_status");
+
+                    b.ToTable("goals", (string)null);
+                });
+
             modelBuilder.Entity("AiStudyOS.Domain.Identity.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -150,6 +211,293 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                     b.ToTable("users", (string)null);
                 });
 
+            modelBuilder.Entity("AiStudyOS.Domain.Planner.DailyTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime?>("CompletedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at_utc");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("date");
+
+                    b.Property<int>("EstimatedMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("estimated_minutes");
+
+                    b.Property<Guid?>("GoalId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("goal_id");
+
+                    b.Property<string>("Reasoning")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("reasoning");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("source");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_daily_tasks");
+
+                    b.HasIndex("GoalId")
+                        .HasDatabaseName("ix_daily_tasks_goal_id");
+
+                    b.HasIndex("UserId", "Date")
+                        .HasDatabaseName("ix_daily_tasks_user_id_date");
+
+                    b.ToTable("daily_tasks", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Planner.PlannerRecommendation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AgentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("agent_type");
+
+                    b.Property<double>("ConfidenceScore")
+                        .HasColumnType("double precision")
+                        .HasColumnName("confidence_score");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("date");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("evidence");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<DateTime>("GeneratedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("generated_at");
+
+                    b.Property<long>("GenerationTimeMs")
+                        .HasColumnType("bigint")
+                        .HasColumnName("generation_time_ms");
+
+                    b.Property<string>("GoalAlignment")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("goal_alignment");
+
+                    b.Property<string>("ImmediateNextAction")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("immediate_next_action");
+
+                    b.Property<DateTime?>("InvalidatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("invalidated_at");
+
+                    b.Property<string>("ModelUsed")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("model_used");
+
+                    b.Property<string>("PromptVersion")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("prompt_version");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("provider");
+
+                    b.Property<string>("RawResponseJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("raw_response_json");
+
+                    b.Property<string>("Recommendation")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("recommendation");
+
+                    b.Property<string>("RecommendationReason")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("recommendation_reason");
+
+                    b.Property<Guid?>("RecommendedTaskId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("recommended_task_id");
+
+                    b.Property<string>("SituationAnalysis")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("situation_analysis");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_planner_recommendations");
+
+                    b.HasIndex("UserId", "Date")
+                        .HasDatabaseName("ix_planner_recommendations_user_id_date");
+
+                    b.ToTable("planner_recommendations", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Telemetry.AiTelemetryEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AgentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("agent_type");
+
+                    b.Property<bool>("Cached")
+                        .HasColumnType("boolean")
+                        .HasColumnName("cached");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("cancellation_reason");
+
+                    b.Property<string>("CircuitBreakerState")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("circuit_breaker_state");
+
+                    b.Property<int>("CompletionTokens")
+                        .HasColumnType("integer")
+                        .HasColumnName("completion_tokens");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("correlation_id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("ErrorType")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("error_type");
+
+                    b.Property<decimal>("EstimatedCostUsd")
+                        .HasColumnType("numeric(12,6)")
+                        .HasColumnName("estimated_cost_usd");
+
+                    b.Property<int>("JsonRepairCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("json_repair_count");
+
+                    b.Property<long>("LatencyMs")
+                        .HasColumnType("bigint")
+                        .HasColumnName("latency_ms");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("model");
+
+                    b.Property<int>("PromptTokens")
+                        .HasColumnType("integer")
+                        .HasColumnName("prompt_tokens");
+
+                    b.Property<string>("PromptVersion")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("prompt_version");
+
+                    b.Property<string>("ProviderKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("provider_key");
+
+                    b.Property<long?>("ResponseSizeBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("response_size_bytes");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("retry_count");
+
+                    b.Property<bool>("Stream")
+                        .HasColumnType("boolean")
+                        .HasColumnName("stream");
+
+                    b.Property<bool>("Success")
+                        .HasColumnType("boolean")
+                        .HasColumnName("success");
+
+                    b.Property<int>("ToolCallCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("tool_call_count");
+
+                    b.HasKey("Id")
+                        .HasName("pk_ai_telemetry_events");
+
+                    b.HasIndex("CorrelationId")
+                        .HasDatabaseName("ix_ai_telemetry_events_correlation_id");
+
+                    b.HasIndex("AgentType", "CreatedAtUtc")
+                        .HasDatabaseName("ix_ai_telemetry_events_agent_type_created_at_utc");
+
+                    b.ToTable("ai_telemetry_events", (string)null);
+                });
+
             modelBuilder.Entity("AiStudyOS.Domain.Identity.RefreshToken", b =>
                 {
                     b.HasOne("AiStudyOS.Domain.Identity.User", null)
@@ -158,6 +506,15 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_refresh_tokens_users_user_id");
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Planner.DailyTask", b =>
+                {
+                    b.HasOne("AiStudyOS.Domain.Goals.Goal", null)
+                        .WithMany()
+                        .HasForeignKey("GoalId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_daily_tasks_goals_goal_id");
                 });
 #pragma warning restore 612, 618
         }
