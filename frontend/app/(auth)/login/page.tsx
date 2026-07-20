@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login as loginRequest } from "@/lib/api/auth";
@@ -34,48 +33,49 @@ export default function LoginPage() {
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Welcome back</CardTitle>
-        <CardDescription>Sign in to continue to your mentor.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={handleSubmit((values) => mutation.mutate(values))}
-        >
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" autoComplete="email" {...register("email")} />
-            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-          </div>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+        <p className="text-sm text-muted-foreground">Sign in to continue to your mentor.</p>
+      </div>
 
-          <div className="flex flex-col gap-2">
+      <form
+        className="flex flex-col gap-5"
+        onSubmit={handleSubmit((values) => mutation.mutate(values))}
+      >
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...register("email")} />
+          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" autoComplete="current-password" {...register("password")} />
-            {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
           </div>
+          <Input id="password" type="password" autoComplete="current-password" placeholder="••••••••" {...register("password")} />
+          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+        </div>
 
-          {mutation.isError && (
-            <p className="text-sm text-destructive">
-              {mutation.error instanceof ApiError && mutation.error.status === 401
-                ? "Invalid email or password."
-                : "Something went wrong. Please try again."}
-            </p>
-          )}
+        {mutation.isError && (
+          <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            {mutation.error instanceof ApiError && mutation.error.status === 401
+              ? "Invalid email or password."
+              : "Something went wrong. Please try again."}
+          </p>
+        )}
 
-          <Button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? "Signing in…" : "Sign in"}
-          </Button>
-        </form>
+        <Button type="submit" size="lg" className="w-full" disabled={mutation.isPending}>
+          {mutation.isPending ? "Signing in…" : "Sign in"}
+        </Button>
+      </form>
 
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="underline underline-offset-4">
-            Create one
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+      <p className="text-center text-sm text-muted-foreground">
+        Don&apos;t have an account?{" "}
+        <Link href="/register" className="font-medium text-foreground underline underline-offset-4">
+          Create one
+        </Link>
+      </p>
+    </div>
   );
 }

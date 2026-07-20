@@ -4,7 +4,7 @@ import { useAuthStore, type AuthUser } from "@/lib/stores/authStore";
 // directly, so the refresh-token cookie the backend sets is first-party to the browser and
 // actually gets stored/sent (a cross-origin Set-Cookie here would be silently dropped/blocked).
 // Client-side use only — there's no implicit origin for a relative fetch() on the server.
-const API_BASE_URL = "/api/backend";
+export const API_BASE_URL = "/api/backend";
 
 export class ApiError extends Error {
   constructor(
