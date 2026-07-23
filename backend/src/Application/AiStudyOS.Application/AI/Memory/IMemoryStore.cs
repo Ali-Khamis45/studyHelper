@@ -1,10 +1,10 @@
-namespace AiStudyOS.Application.AI.Memory;
+using AiStudyOS.Domain.Mentor;
 
-public enum MemoryType { LongTerm, UserProfile, Learning }
+namespace AiStudyOS.Application.AI.Memory;
 
 public record MemoryQuery(Guid UserId, MemoryType? Type = null, string? Topic = null, int? Take = null);
 
-public record MemoryRecordDto(Guid UserId, MemoryType Type, string? Topic, string Content, double Salience, string SourceType, DateTime CreatedAtUtc);
+public record MemoryRecordDto(Guid UserId, MemoryType Type, string? Topic, string Content, double Salience, string SourceType, DateTime CreatedAtUtc, Guid? SourceId = null);
 
 public interface IMemoryStore
 {

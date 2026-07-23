@@ -128,6 +128,9 @@ app.MapHealthEndpoints();
 app.MapAuthEndpoints();
 app.MapGoalsEndpoints();
 app.MapPlannerEndpoints();
+app.MapMentorEndpoints();
+app.MapQuizEndpoints();
+app.MapAnalyticsEndpoints();
 app.MapSystemEndpoints();
 
 app.Run();

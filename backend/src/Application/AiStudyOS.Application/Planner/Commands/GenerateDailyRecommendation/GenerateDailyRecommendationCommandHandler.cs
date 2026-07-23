@@ -30,7 +30,7 @@ public class GenerateDailyRecommendationCommandHandler(
         var (_, context, prompt) = await RecommendationPreparation.PrepareAsync(agentRegistry, contextBuilder, promptLibrary, userId, ct);
 
         var kernelResult = await aiKernel.ExecuteAsync<RecommendationResult>(
-            new KernelRequest(AgentType.Recommendation, prompt, context, prompt.ExpectedJsonSchema),
+            new KernelRequest(AgentType.Recommendation, prompt, context, prompt.ExpectedJsonSchema, UserId: userId),
             ct);
 
         if (!kernelResult.Success || kernelResult.Data is null)

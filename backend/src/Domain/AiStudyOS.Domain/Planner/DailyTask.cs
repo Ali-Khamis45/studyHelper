@@ -17,6 +17,9 @@ public class DailyTask : Entity
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime UpdatedAtUtc { get; private set; }
 
+    /// <summary>How many times this task has been moved via Reschedule — real, persisted count backing Analytics' "Rescheduled Tasks" metric (Date itself is overwritten on each move, so without this counter that history would be unrecoverable).</summary>
+    public int RescheduleCount { get; private set; }
+
     private DailyTask() { }
 
     public static DailyTask Create(
@@ -65,6 +68,7 @@ public class DailyTask : Entity
         Date = newDate;
         Status = DailyTaskStatus.Pending;
         CompletedAtUtc = null;
+        RescheduleCount++;
         UpdatedAtUtc = nowUtc;
     }
 }

@@ -24,5 +24,7 @@ public class AiTelemetryEventConfiguration : IEntityTypeConfiguration<AiTelemetr
 
         builder.HasIndex(e => new { e.AgentType, e.CreatedAtUtc });
         builder.HasIndex(e => e.CorrelationId);
+        // Backs Analytics' AI Statistics section (ComputeAiAnalyticsAsync) — per-user, date-ranged.
+        builder.HasIndex(e => new { e.UserId, e.CreatedAtUtc });
     }
 }

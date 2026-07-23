@@ -31,6 +31,13 @@ public class AiTelemetryEvent : Entity
     public long? ResponseSizeBytes { get; private set; }
     public string? CancellationReason { get; private set; }
 
+    /// <summary>
+    /// Nullable and absent on rows recorded before this field existed — Analytics' AI Statistics
+    /// section only ever sums/averages over rows where this is set, so pre-M9 telemetry is honestly
+    /// excluded rather than misattributed.
+    /// </summary>
+    public Guid? UserId { get; private set; }
+
     private AiTelemetryEvent() { }
 
     public static AiTelemetryEvent Create(
@@ -53,7 +60,8 @@ public class AiTelemetryEvent : Entity
         bool cached,
         string? circuitBreakerState,
         long? responseSizeBytes,
-        string? cancellationReason)
+        string? cancellationReason,
+        Guid? userId)
     {
         return new AiTelemetryEvent
         {
@@ -77,6 +85,7 @@ public class AiTelemetryEvent : Entity
             CircuitBreakerState = circuitBreakerState,
             ResponseSizeBytes = responseSizeBytes,
             CancellationReason = cancellationReason,
+            UserId = userId,
         };
     }
 }

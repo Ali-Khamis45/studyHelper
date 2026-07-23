@@ -22,7 +22,8 @@ public record AiTelemetryRecord(
     bool Cached = false,
     string? CircuitBreakerState = null,
     long? ResponseSizeBytes = null,
-    string? CancellationReason = null);
+    string? CancellationReason = null,
+    Guid? UserId = null);
 
 public interface IAiTelemetryRecorder
 {

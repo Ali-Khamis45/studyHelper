@@ -22,6 +22,90 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("AiStudyOS.Domain.Analytics.AnalyticsInsight", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("correlation_id");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at_utc");
+
+                    b.Property<DateTime>("GeneratedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("generated_at_utc");
+
+                    b.Property<DateTime?>("InvalidatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("invalidated_at_utc");
+
+                    b.Property<string>("ModelUsed")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("model_used");
+
+                    b.Property<string>("MonthlySummary")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("monthly_summary");
+
+                    b.Property<string>("PromptVersion")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("prompt_version");
+
+                    b.Property<string>("RecommendedFocusAreasJson")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("recommended_focus_areas_json");
+
+                    b.Property<string>("RiskDetection")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("risk_detection");
+
+                    b.Property<string>("StrengthsJson")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("strengths_json");
+
+                    b.Property<string>("SuggestedScheduleImprovementsJson")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("suggested_schedule_improvements_json");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("WeaknessesJson")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("weaknesses_json");
+
+                    b.Property<string>("WeeklySummary")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("weekly_summary");
+
+                    b.HasKey("Id")
+                        .HasName("pk_analytics_insights");
+
+                    b.HasIndex("UserId", "GeneratedAtUtc")
+                        .HasDatabaseName("ix_analytics_insights_user_id_generated_at_utc");
+
+                    b.ToTable("analytics_insights", (string)null);
+                });
+
             modelBuilder.Entity("AiStudyOS.Domain.Goals.Goal", b =>
                 {
                     b.Property<Guid>("Id")
@@ -211,6 +295,179 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                     b.ToTable("users", (string)null);
                 });
 
+            modelBuilder.Entity("AiStudyOS.Domain.Mentor.Conversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<bool>("IsPinned")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_pinned");
+
+                    b.Property<DateTime?>("LastMessageAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_message_at_utc");
+
+                    b.Property<int>("MessageCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("message_count");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.Property<int>("TotalCompletionTokens")
+                        .HasColumnType("integer")
+                        .HasColumnName("total_completion_tokens");
+
+                    b.Property<int>("TotalPromptTokens")
+                        .HasColumnType("integer")
+                        .HasColumnName("total_prompt_tokens");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_mentor_conversations");
+
+                    b.HasIndex("UserId", "IsPinned")
+                        .HasDatabaseName("ix_mentor_conversations_user_id_is_pinned");
+
+                    b.HasIndex("UserId", "LastMessageAtUtc")
+                        .HasDatabaseName("ix_mentor_conversations_user_id_last_message_at_utc");
+
+                    b.ToTable("mentor_conversations", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Mentor.ConversationMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AgentType")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("agent_type");
+
+                    b.Property<int?>("CompletionTokens")
+                        .HasColumnType("integer")
+                        .HasColumnName("completion_tokens");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("conversation_id");
+
+                    b.Property<string>("CorrelationId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("correlation_id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("ModelUsed")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("model_used");
+
+                    b.Property<int?>("PromptTokens")
+                        .HasColumnType("integer")
+                        .HasColumnName("prompt_tokens");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("role");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_mentor_messages");
+
+                    b.HasIndex("ConversationId", "CreatedAtUtc")
+                        .HasDatabaseName("ix_mentor_messages_conversation_id_created_at_utc");
+
+                    b.ToTable("mentor_messages", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Mentor.MemoryRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<double>("Salience")
+                        .HasColumnType("double precision")
+                        .HasColumnName("salience");
+
+                    b.Property<Guid?>("SourceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("source_id");
+
+                    b.Property<string>("SourceType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("source_type");
+
+                    b.Property<string>("Topic")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("topic");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("type");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_mentor_memory_records");
+
+                    b.HasIndex("UserId", "Type", "Salience")
+                        .HasDatabaseName("ix_mentor_memory_records_user_id_type_salience");
+
+                    b.ToTable("mentor_memory_records", (string)null);
+                });
+
             modelBuilder.Entity("AiStudyOS.Domain.Planner.DailyTask", b =>
                 {
                     b.Property<Guid>("Id")
@@ -247,6 +504,10 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("reasoning");
+
+                    b.Property<int>("RescheduleCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("reschedule_count");
 
                     b.Property<string>("Source")
                         .IsRequired()
@@ -392,6 +653,307 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                     b.ToTable("planner_recommendations", (string)null);
                 });
 
+            modelBuilder.Entity("AiStudyOS.Domain.Quiz.Quiz", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("correlation_id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("difficulty");
+
+                    b.Property<Guid?>("GoalId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("goal_id");
+
+                    b.Property<string>("ModelUsed")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("model_used");
+
+                    b.Property<string>("PromptVersion")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("prompt_version");
+
+                    b.Property<int>("QuestionCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("question_count");
+
+                    b.Property<string>("QuizType")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("quiz_type");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("topic");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_quizzes");
+
+                    b.HasIndex("UserId", "CreatedAtUtc")
+                        .HasDatabaseName("ix_quizzes_user_id_created_at_utc");
+
+                    b.ToTable("quizzes", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Quiz.QuizAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("AnsweredAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("answered_at_utc");
+
+                    b.Property<Guid>("AttemptId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("attempt_id");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_correct");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("question_id");
+
+                    b.Property<string>("UserAnswer")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_answer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_quiz_answers");
+
+                    b.HasIndex("AttemptId")
+                        .HasDatabaseName("ix_quiz_answers_attempt_id");
+
+                    b.HasIndex("QuestionId")
+                        .HasDatabaseName("ix_quiz_answers_question_id");
+
+                    b.ToTable("quiz_answers", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Quiz.QuizAttempt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime?>("CompletedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at_utc");
+
+                    b.Property<int>("CorrectCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("correct_count");
+
+                    b.Property<Guid>("QuizId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("quiz_id");
+
+                    b.Property<double?>("Score")
+                        .HasColumnType("double precision")
+                        .HasColumnName("score");
+
+                    b.Property<DateTime>("StartedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at_utc");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("status");
+
+                    b.Property<int>("TotalCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("total_count");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_quiz_attempts");
+
+                    b.HasIndex("QuizId")
+                        .HasDatabaseName("ix_quiz_attempts_quiz_id");
+
+                    b.HasIndex("UserId", "StartedAtUtc")
+                        .HasDatabaseName("ix_quiz_attempts_user_id_started_at_utc");
+
+                    b.ToTable("quiz_attempts", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Quiz.QuizQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CorrectAnswer")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("correct_answer");
+
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("difficulty");
+
+                    b.Property<string>("Explanation")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("explanation");
+
+                    b.Property<string>("OptionsJson")
+                        .HasColumnType("text")
+                        .HasColumnName("options_json");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
+                    b.Property<Guid>("QuizId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("quiz_id");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("text");
+
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("topic");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_quiz_questions");
+
+                    b.HasIndex("QuizId", "Order")
+                        .HasDatabaseName("ix_quiz_questions_quiz_id_order");
+
+                    b.ToTable("quiz_questions", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Quiz.TopicMastery", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AttemptsCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempts_count");
+
+                    b.Property<DateTime>("LastUpdatedUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_updated_utc");
+
+                    b.Property<double>("MasteryScore")
+                        .HasColumnType("double precision")
+                        .HasColumnName("mastery_score");
+
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("topic");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_topic_mastery");
+
+                    b.HasIndex("UserId", "Topic")
+                        .IsUnique()
+                        .HasDatabaseName("ix_topic_mastery_user_id_topic");
+
+                    b.ToTable("topic_mastery", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Quiz.TopicMasteryHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<double>("MasteryScore")
+                        .HasColumnType("double precision")
+                        .HasColumnName("mastery_score");
+
+                    b.Property<DateTime>("RecordedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at_utc");
+
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("topic");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_topic_mastery_history");
+
+                    b.HasIndex("UserId", "RecordedAtUtc")
+                        .HasDatabaseName("ix_topic_mastery_history_user_id_recorded_at_utc");
+
+                    b.ToTable("topic_mastery_history", (string)null);
+                });
+
             modelBuilder.Entity("AiStudyOS.Domain.Telemetry.AiTelemetryEvent", b =>
                 {
                     b.Property<Guid>("Id")
@@ -491,6 +1053,10 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("tool_call_count");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_ai_telemetry_events");
 
@@ -499,6 +1065,9 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("AgentType", "CreatedAtUtc")
                         .HasDatabaseName("ix_ai_telemetry_events_agent_type_created_at_utc");
+
+                    b.HasIndex("UserId", "CreatedAtUtc")
+                        .HasDatabaseName("ix_ai_telemetry_events_user_id_created_at_utc");
 
                     b.ToTable("ai_telemetry_events", (string)null);
                 });
@@ -513,6 +1082,16 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_refresh_tokens_users_user_id");
                 });
 
+            modelBuilder.Entity("AiStudyOS.Domain.Mentor.ConversationMessage", b =>
+                {
+                    b.HasOne("AiStudyOS.Domain.Mentor.Conversation", null)
+                        .WithMany()
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_mentor_messages_mentor_conversations_conversation_id");
+                });
+
             modelBuilder.Entity("AiStudyOS.Domain.Planner.DailyTask", b =>
                 {
                     b.HasOne("AiStudyOS.Domain.Goals.Goal", null)
@@ -520,6 +1099,43 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                         .HasForeignKey("GoalId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_daily_tasks_goals_goal_id");
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Quiz.QuizAnswer", b =>
+                {
+                    b.HasOne("AiStudyOS.Domain.Quiz.QuizAttempt", null)
+                        .WithMany()
+                        .HasForeignKey("AttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_quiz_answers_quiz_attempts_attempt_id");
+
+                    b.HasOne("AiStudyOS.Domain.Quiz.QuizQuestion", null)
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_quiz_answers_quiz_questions_question_id");
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Quiz.QuizAttempt", b =>
+                {
+                    b.HasOne("AiStudyOS.Domain.Quiz.Quiz", null)
+                        .WithMany()
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_quiz_attempts_quizzes_quiz_id");
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Quiz.QuizQuestion", b =>
+                {
+                    b.HasOne("AiStudyOS.Domain.Quiz.Quiz", null)
+                        .WithMany()
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_quiz_questions_quizzes_quiz_id");
                 });
 #pragma warning restore 612, 618
         }

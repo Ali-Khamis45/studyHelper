@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
+/* Fixed dark theme for Mentor code blocks regardless of app light/dark mode — a common,
+   intentional choice (mirrors how GitHub renders code blocks) rather than an oversight. */
+@import "highlight.js/styles/github-dark.css";
 
 @custom-variant dark (&:is(.dark *));
 

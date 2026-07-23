@@ -33,7 +33,8 @@ public class PostgresAiTelemetryRecorder(IApplicationDbContext db) : IAiTelemetr
             record.Cached,
             record.CircuitBreakerState,
             record.ResponseSizeBytes,
-            record.CancellationReason);
+            record.CancellationReason,
+            record.UserId);
 
         db.AiTelemetryEvents.Add(entity);
         await db.SaveChangesAsync(ct);

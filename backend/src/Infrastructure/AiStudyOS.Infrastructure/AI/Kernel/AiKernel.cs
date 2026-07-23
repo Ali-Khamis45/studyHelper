@@ -70,7 +70,7 @@ public class AiKernel(
 
         using var activity = StartActivity(request, correlationId, model, stream: false);
 
-        var messages = new List<AiChatMessage> { new("system", RenderTemplate(request.Prompt.Template, request.Context)) };
+        var messages = BuildMessages(request);
 
         var retryCount = 0;
         var jsonRepairCount = 0;
@@ -162,7 +162,7 @@ public class AiKernel(
 
         using var activity = StartActivity(request, correlationId, model, stream: true);
 
-        var messages = new List<AiChatMessage> { new("system", RenderTemplate(request.Prompt.Template, request.Context)) };
+        var messages = BuildMessages(request);
 
         var retryCount = 0;
         var jsonRepairCount = 0;
@@ -344,7 +344,8 @@ public class AiKernel(
             Cached: false, // a kernel execution only ever happens when the caller's own result cache missed
             CircuitBreakerState: chatClient.CircuitState,
             ResponseSizeBytes: responseSizeBytes,
-            CancellationReason: null);
+            CancellationReason: null,
+            UserId: request.UserId);
 
         await PersistTelemetryAsync(record);
         RecordMetrics(record);
@@ -375,7 +376,8 @@ public class AiKernel(
             Cached: false,
             CircuitBreakerState: chatClient.CircuitState,
             ResponseSizeBytes: responseSizeBytes,
-            CancellationReason: "The request was cancelled by the caller (client disconnected or the operation was explicitly cancelled).");
+            CancellationReason: "The request was cancelled by the caller (client disconnected or the operation was explicitly cancelled).",
+            UserId: request.UserId);
 
         await PersistTelemetryAsync(record);
         RecordMetrics(record);
@@ -425,6 +427,22 @@ public class AiKernel(
         messages.Add(new AiChatMessage(
             "user",
             $"Your previous response was not valid JSON: {parseError}. Return ONLY the corrected JSON object — no commentary, no markdown code fences."));
+    }
+
+    /// <summary>
+    /// A system-only message list (no trailing "user" turn) makes Ollama's /api/chat template
+    /// render an empty/ambiguous user turn — observed in practice as the model echoing a stray
+    /// "assistant" role marker into its own output. UserMessage gives conversational agents (Mentor)
+    /// a real trailing user turn; single-shot structured agents (Recommendation) leave it null and
+    /// are unaffected.
+    /// </summary>
+    private static List<AiChatMessage> BuildMessages(KernelRequest request)
+    {
+        var messages = new List<AiChatMessage> { new("system", RenderTemplate(request.Prompt.Template, request.Context)) };
+        if (!string.IsNullOrEmpty(request.UserMessage))
+            messages.Add(new AiChatMessage("user", request.UserMessage));
+
+        return messages;
     }
 
     private static string RenderTemplate(string template, AiContext context)

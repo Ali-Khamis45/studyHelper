@@ -2,17 +2,24 @@ using AiStudyOS.Application.AI.Agents;
 using AiStudyOS.Application.AI.Context;
 using AiStudyOS.Application.AI.Context.Providers;
 using AiStudyOS.Application.AI.Kernel;
+using AiStudyOS.Application.AI.Memory;
 using AiStudyOS.Application.AI.Prompts;
+using AiStudyOS.Application.AI.Routing;
 using AiStudyOS.Application.AI.Telemetry;
 using AiStudyOS.Application.AI.Tools;
 using AiStudyOS.Application.AI.Tools.Implementations;
 using AiStudyOS.Application.Common.Interfaces;
 using AiStudyOS.Application.Common.Options;
+using AiStudyOS.Application.Mentor.Ai;
+using AiStudyOS.Application.Mentor.Streaming;
 using AiStudyOS.Application.Planner.Streaming;
+using AiStudyOS.Application.Quiz.Streaming;
 using AiStudyOS.Domain.Identity;
 using AiStudyOS.Infrastructure.AI.Kernel;
+using AiStudyOS.Infrastructure.AI.Memory;
 using AiStudyOS.Infrastructure.AI.Prompts;
 using AiStudyOS.Infrastructure.AI.Providers;
+using AiStudyOS.Infrastructure.AI.Routing;
 using AiStudyOS.Infrastructure.AI.Telemetry;
 using AiStudyOS.Infrastructure.Common;
 using AiStudyOS.Infrastructure.Identity;
@@ -46,6 +53,13 @@ public static class DependencyInjection
         services.Configure<PasswordPolicyOptions>(configuration.GetSection(PasswordPolicyOptions.SectionName));
         services.Configure<RateLimitOptions>(configuration.GetSection(RateLimitOptions.SectionName));
         services.Configure<PlannerOptions>(configuration.GetSection(PlannerOptions.SectionName));
+        services.Configure<MentorOptions>(configuration.GetSection(MentorOptions.SectionName));
+        services.Configure<QuizOptions>(configuration.GetSection(QuizOptions.SectionName));
+        services.Configure<AnalyticsOptions>(configuration.GetSection(AnalyticsOptions.SectionName));
+
+        // Community license: free for individuals/companies under $1M USD annual gross revenue —
+        // appropriate here. Set once at startup; QuestPDF reads this statically wherever it's used.
+        QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
         // Validated eagerly at startup (ValidateOnStart) rather than lazily on first use — a bad
         // Ollama URL or an impossible circuit-breaker/cache setting fails the app immediately
@@ -145,6 +159,12 @@ public static class DependencyInjection
         services.AddScoped<GoalContextProvider>();
         services.AddScoped<TaskContextProvider>();
         services.AddScoped<TimeOfDayContextProvider>();
+        services.AddScoped<ConversationContextProvider>();
+        services.AddScoped<MemoryContextProvider>();
+        services.AddScoped<AnalyticsSnapshotContextProvider>();
+        services.AddScoped<QuizRequestContextProvider>();
+        services.AddScoped<TopicMasteryContextProvider>();
+        services.AddScoped<QuizHistoryContextProvider>();
         services.AddScoped<IContextBuilder, ContextBuilder>();
 
         services.AddScoped<ITool, PlannerTool>();
@@ -152,10 +172,25 @@ public static class DependencyInjection
         services.AddScoped<IToolExecutor, ToolExecutor>();
         services.AddScoped<IRecommendationStreamer, RecommendationStreamer>();
 
+        // --- Mentor stack -------------------------------------------------------------------
+        services.AddScoped<IMemoryStore, PostgresMemoryStore>();
+        services.AddSingleton<IIntentClassifier, KeywordIntentClassifier>();
+        services.AddScoped<MentorConversationStore>();
+        services.AddScoped<IMentorMessageStreamer, MentorMessageStreamer>();
+
+        // --- Quiz stack ---------------------------------------------------------------------
+        services.AddScoped<IQuizGenerationStreamer, QuizGenerationStreamer>();
+
         services.AddSingleton<IAgentRegistry>(_ =>
         {
             var registry = new AgentRegistry();
             registry.Register(RecommendationAgentDefinition.Create());
+            registry.Register(TutorAgentDefinition.Create());
+            registry.Register(PlannerChatAgentDefinition.Create());
+            registry.Register(AnalyticsAgentDefinition.Create());
+            registry.Register(ExaminerAgentDefinition.Create());
+            registry.Register(QuizGeneratorAgentDefinition.Create());
+            registry.Register(InsightsAgentDefinition.Create());
             return registry;
         });
 

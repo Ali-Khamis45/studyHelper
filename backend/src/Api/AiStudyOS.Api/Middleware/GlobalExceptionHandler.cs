@@ -46,6 +46,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         InvalidRefreshTokenException ex => (StatusCodes.Status401Unauthorized, ex.Message, null),
         NotFoundException ex => (StatusCodes.Status404NotFound, ex.Message, null),
         AiGenerationFailedException ex => (StatusCodes.Status503ServiceUnavailable, ex.Message, null),
+        QuizPreconditionFailedException ex => (StatusCodes.Status400BadRequest, ex.Message, null),
         _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.", null),
     };
 }

@@ -10,7 +10,9 @@ public record KernelRequest(
     PromptDefinition Prompt,
     AiContext Context,
     string? ExpectedSchemaJson = null,
-    string? ModelOverride = null);
+    string? ModelOverride = null,
+    string? UserMessage = null,
+    Guid? UserId = null);
 
 public record KernelResult<T>(T? Data, bool Success, string RawContent, AiTelemetryRecord Telemetry, IReadOnlyList<string> Errors);
 

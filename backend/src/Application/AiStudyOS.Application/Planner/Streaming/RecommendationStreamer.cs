@@ -27,7 +27,7 @@ public class RecommendationStreamer(
         var today = DateOnly.FromDateTime(dateTimeProvider.UtcNow);
 
         var (_, context, prompt) = await RecommendationPreparation.PrepareAsync(agentRegistry, contextBuilder, promptLibrary, userId, ct);
-        var request = new KernelRequest(AgentType.Recommendation, prompt, context, prompt.ExpectedJsonSchema);
+        var request = new KernelRequest(AgentType.Recommendation, prompt, context, prompt.ExpectedJsonSchema, UserId: userId);
 
         // AiKernel parses/validates/retries internally — identically to ExecuteAsync — so this
         // class only forwards deltas as they arrive and reads the already-parsed result off the
