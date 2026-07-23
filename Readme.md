@@ -57,8 +57,6 @@ mock data, no placeholder screens.
 
 ## Screenshots
 
-> Screenshots to be added.
-
 | Dashboard | Planner |
 |---|---|
 | ![Dashboard screenshot](docs/screenshots/dashboard.png) | ![Planner screenshot](docs/screenshots/planner.png) |
