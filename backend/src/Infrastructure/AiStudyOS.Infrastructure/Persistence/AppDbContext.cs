@@ -5,6 +5,7 @@ using AiStudyOS.Domain.Identity;
 using AiStudyOS.Domain.Mentor;
 using AiStudyOS.Domain.Planner;
 using AiStudyOS.Domain.Quiz;
+using AiStudyOS.Domain.Roadmap;
 using AiStudyOS.Domain.Telemetry;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<TopicMastery> TopicMasteries => Set<TopicMastery>();
     public DbSet<TopicMasteryHistory> TopicMasteryHistories => Set<TopicMasteryHistory>();
     public DbSet<AnalyticsInsight> AnalyticsInsights => Set<AnalyticsInsight>();
+    public DbSet<LearningRoadmap> LearningRoadmaps => Set<LearningRoadmap>();
+    public DbSet<RoadmapTopic> RoadmapTopics => Set<RoadmapTopic>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

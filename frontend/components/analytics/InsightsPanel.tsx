@@ -15,7 +15,9 @@ export function InsightsPanel({ insights }: { insights: Insights | null }) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2 text-base">
-          <Sparkles className="size-4 text-primary" />
+          <span className="flex size-7 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground shadow-glow-primary">
+            <Sparkles className="size-3.5" />
+          </span>
           AI Insights
         </CardTitle>
         <Button variant="ghost" size="icon-sm" onClick={() => regenerate.mutate()} disabled={regenerate.isPending} title="Regenerate">
@@ -77,7 +79,7 @@ export function InsightsPanel({ insights }: { insights: Insights | null }) {
               </div>
             )}
 
-            <div className="flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
+            <div className="flex items-start gap-2 rounded-xl border border-warning/30 bg-warning/5 px-3 py-2 text-sm text-warning">
               <AlertTriangle className="mt-0.5 size-4 shrink-0" />
               {insights.riskDetection}
             </div>

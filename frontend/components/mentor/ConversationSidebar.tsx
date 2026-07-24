@@ -54,8 +54,8 @@ function ConversationRow({ conversation, active, onRename }: { conversation: Con
   return (
     <div
       className={cn(
-        "group flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm hover:bg-muted",
-        active && "bg-muted font-medium",
+        "group flex items-center gap-1 rounded-xl px-2 py-1.5 text-sm transition-colors hover:bg-accent/60",
+        active && "bg-gradient-brand-soft font-medium text-foreground",
       )}
     >
       <Link href={`/mentor/${conversation.id}`} className="flex-1 truncate">

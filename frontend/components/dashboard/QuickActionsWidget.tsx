@@ -19,8 +19,17 @@ export function QuickActionsWidget() {
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-2">
         {ACTIONS.map(({ href, label, icon: Icon }) => (
-          <Link key={href} href={href} className={buttonVariants({ variant: "outline", className: "flex-col gap-1.5 py-4 h-auto" })}>
-            <Icon className="size-4" />
+          <Link
+            key={href}
+            href={href}
+            className={buttonVariants({
+              variant: "outline",
+              className: "group h-auto flex-col gap-1.5 py-4 hover:-translate-y-0.5",
+            })}
+          >
+            <span className="flex size-8 items-center justify-center rounded-full bg-gradient-brand text-primary-foreground transition-transform group-hover:scale-110">
+              <Icon className="size-4" />
+            </span>
             <span className="text-xs">{label}</span>
           </Link>
         ))}

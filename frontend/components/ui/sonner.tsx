@@ -4,12 +4,21 @@ import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
+const DARK_LIKE_THEMES = new Set(["dark", "midnight"]);
+
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
+  const { resolvedTheme } = useTheme()
+  // Custom themes (midnight, focus) aren't in Sonner's own light/dark/system union — map each to
+  // whichever toast palette actually matches its background so toasts stay readable.
+  const toastTheme: ToasterProps["theme"] = resolvedTheme
+    ? DARK_LIKE_THEMES.has(resolvedTheme)
+      ? "dark"
+      : "light"
+    : "system"
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme={toastTheme}
       className="toaster group"
       icons={{
         success: (

@@ -14,6 +14,7 @@ using AiStudyOS.Application.Mentor.Ai;
 using AiStudyOS.Application.Mentor.Streaming;
 using AiStudyOS.Application.Planner.Streaming;
 using AiStudyOS.Application.Quiz.Streaming;
+using AiStudyOS.Application.Roadmap.Streaming;
 using AiStudyOS.Domain.Identity;
 using AiStudyOS.Infrastructure.AI.Kernel;
 using AiStudyOS.Infrastructure.AI.Memory;
@@ -165,6 +166,7 @@ public static class DependencyInjection
         services.AddScoped<QuizRequestContextProvider>();
         services.AddScoped<TopicMasteryContextProvider>();
         services.AddScoped<QuizHistoryContextProvider>();
+        services.AddScoped<RoadmapProfileContextProvider>();
         services.AddScoped<IContextBuilder, ContextBuilder>();
 
         services.AddScoped<ITool, PlannerTool>();
@@ -181,6 +183,9 @@ public static class DependencyInjection
         // --- Quiz stack ---------------------------------------------------------------------
         services.AddScoped<IQuizGenerationStreamer, QuizGenerationStreamer>();
 
+        // --- Roadmap stack --------------------------------------------------------------------
+        services.AddScoped<IRoadmapGenerationStreamer, RoadmapGenerationStreamer>();
+
         services.AddSingleton<IAgentRegistry>(_ =>
         {
             var registry = new AgentRegistry();
@@ -191,6 +196,8 @@ public static class DependencyInjection
             registry.Register(ExaminerAgentDefinition.Create());
             registry.Register(QuizGeneratorAgentDefinition.Create());
             registry.Register(InsightsAgentDefinition.Create());
+            registry.Register(RoadmapGeneratorAgentDefinition.Create());
+            registry.Register(RoadmapChatAgentDefinition.Create());
             return registry;
         });
 

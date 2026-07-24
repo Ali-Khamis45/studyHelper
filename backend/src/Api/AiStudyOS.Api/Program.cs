@@ -131,6 +131,7 @@ app.MapPlannerEndpoints();
 app.MapMentorEndpoints();
 app.MapQuizEndpoints();
 app.MapAnalyticsEndpoints();
+app.MapRoadmapEndpoints();
 app.MapSystemEndpoints();
 
 app.Run();

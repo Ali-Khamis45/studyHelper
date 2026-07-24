@@ -2,9 +2,10 @@
 
 # AI Study OS — Mentor
 
-**A full-stack, AI-native study platform — goals, an energy-aware daily planner, an AI mentor
-chat, an adaptive quiz engine, and real data-driven analytics — all routed through one shared,
-provider-agnostic AI pipeline instead of scattered ad-hoc LLM calls.**
+**A full-stack, AI-native study platform — AI-generated learning roadmaps, goals, an
+energy-aware daily planner, an AI mentor chat, an adaptive quiz engine, and real data-driven
+analytics — all routed through one shared, provider-agnostic AI pipeline instead of scattered
+ad-hoc LLM calls.**
 
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/download)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
@@ -48,26 +49,30 @@ AI Study OS is built with a **Clean Architecture / DDD backend** (ASP.NET Core 1
 **Next.js 16** frontend, running on a local, self-hosted AI stack ([Ollama](https://ollama.com) +
 Llama 3.1) — no API keys, no per-token billing, no data leaving your machine.
 
-Every AI-backed feature — planner recommendations, mentor chat, quiz generation, analytics
-insights — flows through the same orchestration pipeline (agent registry → context builder →
-prompt library → resilient kernel), not four different bespoke integrations.
+Every AI-backed feature — roadmap generation, planner recommendations, mentor chat, quiz
+generation, analytics insights — flows through the same orchestration pipeline (agent registry →
+context builder → prompt library → resilient kernel), not six different bespoke integrations.
 
-**Status: Phase 1 (M0–M10) complete.** Every module below is real, tested, and runnable — no
-mock data, no placeholder screens.
+The frontend is a from-scratch glassmorphic design system: frosted-glass cards, animated ambient
+gradients, and four full themes (**Light**, **Dark**, **Midnight**, **Focus**) switchable from the
+top nav and persisted locally — built on Tailwind v4 design tokens, not a component-library skin.
+
+**Status: Phase 1 (M0–M10) complete, plus AI Learning Journey.** Every module below is real,
+tested, and runnable — no mock data, no placeholder screens.
 
 ## Screenshots
 
-| Dashboard | Planner |
+| Dashboard | Learning Journey |
 |---|---|
-| ![Dashboard screenshot](docs/screenshots/dashboard.png) | ![Planner screenshot](docs/screenshots/planner.png) |
+| ![Dashboard screenshot](docs/screenshots/dashboard.png) | ![Learning Journey screenshot](docs/screenshots/roadmap.png) |
 
-| Mentor | Quiz |
+| Planner | Mentor |
 |---|---|
-| ![Mentor screenshot](docs/screenshots/mentor.png) | ![Quiz screenshot](docs/screenshots/quiz.png) |
+| ![Planner screenshot](docs/screenshots/planner.png) | ![Mentor screenshot](docs/screenshots/mentor.png) |
 
-| Analytics |
-|---|
-| ![Analytics screenshot](docs/screenshots/analytics.png) |
+| Quiz | Analytics |
+|---|---|
+| ![Quiz screenshot](docs/screenshots/quiz.png) | ![Analytics screenshot](docs/screenshots/analytics.png) |
 
 ## Demo
 
@@ -84,9 +89,10 @@ placeholders — they're rendered live from this document in the sections below:
 | Module | Status | Highlights |
 |---|:---:|---|
 | **Auth** | ✅ | JWT access tokens, rotating & reuse-detecting refresh tokens, account lockout, IP rate limiting, security headers + HSTS |
+| **AI Learning Journey** | ✅ | AI-generated, personalized roadmaps (career goal → sections → unlimited-depth topics), prerequisite-gated unlocking, live status computed from real quiz mastery — never a separately-synced field — plus per-topic Ask Mentor / Take Quiz / Mark Complete actions |
 | **Goals** | ✅ | Study goals by category, priority, and target date |
 | **Planner** | ✅ | AI daily plan grounded in real goals/history, energy-aware sequencing, smart rescheduling, streaks, daily focus score, weekly workload balancing |
-| **Mentor** | ✅ | Streaming AI chat, persisted conversations, intent-based routing to specialist agents (Tutor, Planner, Analytics, Examiner) |
+| **Mentor** | ✅ | Streaming AI chat, persisted conversations, intent-based routing to specialist agents (Tutor, Planner, Analytics, Examiner, Roadmap) — describe a career goal and it points you at Learning Journey |
 | **Quiz** | ✅ | AI-generated MCQ / true-false / short-answer / fill-in-the-blank, auto-grading, weighted-moving-average topic mastery, weak-topic review quizzes |
 | **Analytics** | ✅ | Server-computed metrics (study time, streaks, quiz trends, mastery evolution, planner effectiveness, AI usage), AI-generated weekly/monthly insights, PDF/CSV export |
 | **Dashboard** | ✅ | Independently-loading widgets (today's plan, streak, goal progress, weak topics, mastery chart, weekly activity, AI insights) — one widget failing never blocks the rest |
@@ -113,9 +119,11 @@ flowchart LR
     style P fill:#111827,color:#fff
 ```
 
-- **Agent Registry** — each specialist agent (Recommendation, Tutor, Planner-chat, Analytics,
-  Examiner, Quiz Generator, Insights) declares its own prompt, context providers, output schema,
-  and retry policy. Routing is data, not a switch statement full of prompts.
+- **Agent Registry** — each of the 9 specialist agents (Recommendation, Tutor, Planner-chat,
+  Analytics, Examiner, Quiz Generator, Insights, Roadmap Generator, Roadmap Chat) declares its own
+  prompt, context providers, output schema, and retry policy. Routing is data, not a switch
+  statement full of prompts — adding Roadmap meant registering two new agents and one new intent
+  rule, not touching any existing agent's code.
 - **Context Builder** — assembles only the context an agent actually needs (goals, tasks,
   mastery, conversation history, memory) under a token budget, dropping lowest-priority fragments
   first.
@@ -147,10 +155,11 @@ flowchart TD
     style Api fill:#c7d2fe,color:#111
 ```
 
-Every feature module (Goals, Planner, Mentor, Quiz, Analytics) follows the identical shape end to
-end: a Domain aggregate → Application commands/queries → an EF configuration → a Minimal API
-endpoint group → a typed frontend API client → a TanStack Query hook → a page. New features
-extend this shape rather than inventing a new one.
+Every feature module (Goals, Planner, Mentor, Quiz, Analytics, Roadmap) follows the identical
+shape end to end: a Domain aggregate → Application commands/queries → an EF configuration → a
+Minimal API endpoint group → a typed frontend API client → a TanStack Query hook → a page. New
+features extend this shape rather than inventing a new one — Learning Journey is the proof: 11
+new backend files, zero changes to any existing handler.
 
 ## Database
 
@@ -170,8 +179,12 @@ erDiagram
     USERS ||--o{ TOPIC_MASTERY_HISTORY : owns
     USERS ||--o{ ANALYTICS_INSIGHTS : owns
     USERS ||--o{ AI_TELEMETRY_EVENTS : "generates (optional)"
+    USERS ||--o{ LEARNING_ROADMAPS : owns
 
     GOALS ||--o{ DAILY_TASKS : "informs (nullable, SetNull)"
+
+    LEARNING_ROADMAPS ||--o{ ROADMAP_TOPICS : contains
+    ROADMAP_TOPICS ||--o{ ROADMAP_TOPICS : "nests under (nullable, id-only)"
 
     MENTOR_CONVERSATIONS ||--o{ MENTOR_MESSAGES : contains
 
@@ -254,7 +267,25 @@ erDiagram
         string correlation_id
         string agent_type
     }
+    LEARNING_ROADMAPS {
+        uuid id PK
+        uuid user_id FK
+        string career_goal
+        string difficulty
+        string status
+    }
+    ROADMAP_TOPICS {
+        uuid id PK
+        uuid roadmap_id FK
+        uuid parent_topic_id "nullable, self-referencing, id-only"
+        string title
+        string linked_mastery_topic
+    }
 ```
+
+`ROADMAP_TOPICS.status` is deliberately not a column — it's computed at read time from
+`ManuallyCompletedAtUtc`, each topic's prerequisite ids, and the user's live `TOPIC_MASTERY` rows
+(via `linked_mastery_topic`), so completing a quiz can never leave a roadmap's progress stale.
 
 ## Project Structure
 
@@ -264,7 +295,7 @@ erDiagram
 ```
 backend/
   src/
-    Domain/            Aggregates & entities — Goals, Planner, Mentor, Quiz, Analytics, Identity
+    Domain/            Aggregates & entities — Goals, Planner, Mentor, Quiz, Analytics, Roadmap, Identity
                         No dependencies on anything else in the solution.
     Application/        CQRS handlers, DTOs, AI orchestration (agents, context, prompts, kernel)
                         Depends only on Domain.
@@ -445,6 +476,20 @@ contracts: Scalar docs at `/scalar` when the API is running.
 </details>
 
 <details>
+<summary><strong>Roadmap</strong> — <code>/api/v1/roadmaps</code></summary>
+
+| Method | Route | Description |
+|---|---|---|
+| GET | `/` | List learning journeys (summaries, computed progress) |
+| POST | `/generate` | Generate a personalized roadmap from a career goal + intake profile |
+| POST | `/generate/stream` | Streaming roadmap generation |
+| GET | `/{id}` | Full roadmap tree with live-computed status per topic |
+| DELETE | `/{id}` | Delete a roadmap |
+| PATCH | `/{id}/topics/{topicId}/complete` | Mark a topic complete or incomplete |
+
+</details>
+
+<details>
 <summary><strong>Analytics</strong> — <code>/api/v1/analytics</code></summary>
 
 | Method | Route | Description |
@@ -493,8 +538,9 @@ npm install
 npm run dev                                        # http://localhost:3000
 ```
 
-Open `http://localhost:3000`, register an account, and everything — goals, planner, mentor,
-quiz, analytics — is live against real Ollama generation from the first request.
+Open `http://localhost:3000`, register an account, and everything — the AI Learning Journey,
+goals, planner, mentor, quiz, analytics — is live against real Ollama generation from the first
+request.
 
 ## Performance
 
@@ -519,6 +565,7 @@ not measured numbers:
 
 Planned, not yet built:
 
+- [ ] Automated test coverage for the AI Learning Journey module (verified so far by live end-to-end runs against real Ollama, not yet backed by unit/integration tests the way every other module is)
 - [ ] Redis caching (already provisioned in `infra/docker-compose.yml`, not yet wired into the app)
 - [ ] OpenAI provider adapter (via the existing `IAiChatClient` seam)
 - [ ] Anthropic provider adapter (via the existing `IAiChatClient` seam)

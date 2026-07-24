@@ -10,12 +10,13 @@ import { MessageInput } from "@/components/mentor/MessageInput";
 import { TypingIndicator } from "@/components/mentor/TypingIndicator";
 import type { ConversationMessage } from "@/lib/types/mentor";
 
-export function ChatWindow({ conversationId }: { conversationId: string }) {
+export function ChatWindow({ conversationId, initialMessage }: { conversationId: string; initialMessage?: string }) {
   const { data: conversation } = useConversation(conversationId);
   const { data: messagesPage, isLoading } = useConversationMessages(conversationId);
   const { send, stop, isStreaming, partialText, error } = useStreamMessage(conversationId);
 
   const bottomRef = useRef<HTMLDivElement>(null);
+  const firedInitialMessageRef = useRef(false);
 
   const messages = messagesPage?.items ?? [];
 
@@ -23,13 +24,23 @@ export function ChatWindow({ conversationId }: { conversationId: string }) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length, partialText]);
 
+  // Lets other modules (e.g. Roadmap's "Ask Mentor" on a topic) open a fresh conversation and have
+  // it immediately ask on the user's behalf — only ever fires once, and only into a conversation
+  // that's confirmed empty, so it can never resend into an existing chat.
+  useEffect(() => {
+    if (!initialMessage || firedInitialMessageRef.current || isLoading || messages.length > 0) return;
+    firedInitialMessageRef.current = true;
+    send(initialMessage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialMessage, isLoading, messages.length]);
+
   const lastUserMessage = [...messages].reverse().find((m) => m.role === "User");
   const lastMessage = messages[messages.length - 1];
   const canRegenerate = !isStreaming && !!lastUserMessage && lastMessage?.role === "Assistant";
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-xl border bg-background">
-      <div className="flex items-center justify-between border-b px-4 py-3">
+    <div className="glass ring-glass flex h-full flex-col overflow-hidden rounded-2xl border border-border">
+      <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
         <div className="flex flex-col">
           <span className="text-sm font-semibold">{conversation?.title ?? "Conversation"}</span>
           {conversation && (

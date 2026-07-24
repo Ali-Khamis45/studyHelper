@@ -15,7 +15,7 @@ export function PlannerStatsCards({ studyStreak, dailyFocusScore, dailyCompletio
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <Card>
         <CardContent className="flex items-center gap-3 py-2">
-          <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-full", studyStreak > 0 ? "bg-orange-500/10 text-orange-500" : "bg-muted text-muted-foreground")}>
+          <div className={cn("flex size-11 shrink-0 items-center justify-center rounded-full", studyStreak > 0 ? "bg-gradient-to-br from-orange-400 to-amber-500 text-white shadow-[0_6px_16px_-4px_rgba(249,115,22,0.5)]" : "bg-muted text-muted-foreground")}>
             <Flame className="size-5" />
           </div>
           <div>
@@ -27,7 +27,7 @@ export function PlannerStatsCards({ studyStreak, dailyFocusScore, dailyCompletio
 
       <Card>
         <CardContent className="flex items-center gap-3 py-2">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-brand text-primary-foreground shadow-glow-primary">
             <Target className="size-5" />
           </div>
           <div>
@@ -40,7 +40,7 @@ export function PlannerStatsCards({ studyStreak, dailyFocusScore, dailyCompletio
       <Card>
         <CardContent className="flex flex-col gap-2 py-2">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-[0_6px_16px_-4px_rgba(16,185,129,0.5)]">
               <TrendingUp className="size-5" />
             </div>
             <div>

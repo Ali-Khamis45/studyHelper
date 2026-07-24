@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { RotateCcw, TrendingDown } from "lucide-react";
+import { motion } from "framer-motion";
+import { PartyPopper, RotateCcw, TrendingDown } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,8 @@ export function QuizResultView({ result }: { result: QuizAttemptResult }) {
   const retryQuiz = useRetryQuiz();
   const animatedScore = useCountUp(result.score);
 
-  const scoreColor = result.score >= 80 ? "text-primary" : result.score >= 50 ? "text-amber-500" : "text-destructive";
+  const celebrate = result.score >= 80;
+  const scoreColor = celebrate ? "text-gradient-brand" : result.score >= 50 ? "text-warning" : "text-destructive";
 
   const handleRetry = () => {
     retryQuiz.mutate(result.quizId, { onSuccess: () => router.push(`/quiz/${result.quizId}?retry=1`) });
@@ -45,21 +47,33 @@ export function QuizResultView({ result }: { result: QuizAttemptResult }) {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <div className="flex flex-col items-center gap-2 rounded-2xl border bg-background py-8 text-center">
-        <span className={cn("text-5xl font-bold tabular-nums", scoreColor)}>{animatedScore}%</span>
-        <p className="text-sm text-muted-foreground">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="glass ring-glass relative flex flex-col items-center gap-2 overflow-hidden rounded-3xl border border-border py-10 text-center"
+      >
+        {celebrate && <span className="pointer-events-none absolute inset-0 bg-gradient-brand-soft" aria-hidden="true" />}
+        {celebrate && (
+          <span className="relative mb-1 flex items-center gap-1.5 rounded-full bg-gradient-brand px-3 py-1 text-xs font-medium text-primary-foreground shadow-glow-primary">
+            <PartyPopper className="size-3.5" />
+            Great job!
+          </span>
+        )}
+        <span className={cn("relative text-6xl font-bold tabular-nums", scoreColor)}>{animatedScore}%</span>
+        <p className="relative text-sm text-muted-foreground">
           {result.correctCount} of {result.totalCount} correct
         </p>
-        <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="relative mt-2 flex items-center gap-3 text-xs text-muted-foreground">
           <span>Confidence: {Math.round(result.confidence * 100)}%</span>
           <span>·</span>
           <span>{result.quizTitle}</span>
         </div>
-      </div>
+      </motion.div>
 
       {result.weakTopics.length > 0 && (
-        <div className="flex flex-col gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
-          <div className="flex items-center gap-2 text-sm font-medium text-amber-600 dark:text-amber-400">
+        <div className="glass flex flex-col gap-2 rounded-2xl border border-warning/30 bg-warning/5 p-4">
+          <div className="flex items-center gap-2 text-sm font-medium text-warning">
             <TrendingDown className="size-4" />
             Weak topics from this attempt
           </div>

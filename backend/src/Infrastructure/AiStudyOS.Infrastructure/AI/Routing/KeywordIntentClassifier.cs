@@ -19,6 +19,7 @@ public class KeywordIntentClassifier : IIntentClassifier
         new(AgentType.Analytics, ["progress", "streak", "analytics", "stats", "statistic", "performance", "completion rate", "how am i doing", "track my"]),
         new(AgentType.Examiner, ["quiz", "test me", "practice question", "flashcard", "exam me", "ask me questions", "practice test"]),
         new(AgentType.Tutor, ["explain", "teach", "understand", "help me learn", "career", "motivat", "advice", "confused", "study tip", "how do i"]),
+        new(AgentType.RoadmapChat, ["want to become", "learning roadmap", "learning journey", "learning path", "career path", "roadmap for", "how do i become"]),
     ];
 
     private const AgentType FallbackIntent = AgentType.Tutor;

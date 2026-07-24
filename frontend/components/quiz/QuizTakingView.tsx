@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Timer } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -57,14 +58,23 @@ export function QuizTakingView({ quiz, onComplete }: { quiz: QuizDetail; onCompl
 
       <Progress value={progressPercent} />
 
-      <div className="flex flex-col gap-4 rounded-2xl border bg-background p-6">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">{question.topic}</Badge>
-          <Badge variant="outline">{question.difficulty}</Badge>
-        </div>
-        <p className="text-base leading-relaxed font-medium">{question.text}</p>
-        <QuestionCard question={question} value={answers[question.id] ?? ""} onChange={(value) => setAnswers((prev) => ({ ...prev, [question.id]: value }))} />
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={question.id}
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -16 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="glass ring-glass flex flex-col gap-4 rounded-2xl border border-border p-6 sm:p-8"
+        >
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">{question.topic}</Badge>
+            <Badge variant="outline">{question.difficulty}</Badge>
+          </div>
+          <p className="text-xl leading-relaxed font-semibold text-balance">{question.text}</p>
+          <QuestionCard question={question} value={answers[question.id] ?? ""} onChange={(value) => setAnswers((prev) => ({ ...prev, [question.id]: value }))} />
+        </motion.div>
+      </AnimatePresence>
 
       <div className="flex items-center justify-between">
         <Button type="button" variant="outline" onClick={() => setIndex((i) => Math.max(0, i - 1))} disabled={index === 0}>

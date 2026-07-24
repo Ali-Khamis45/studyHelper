@@ -25,4 +25,18 @@ public enum AgentType
     /// Analytics, which is Mentor's conversational progress-discussion persona (chat, free text).
     /// </summary>
     Insights,
+
+    /// <summary>
+    /// Structured Learning Roadmap generation (single-shot JSON — sections, nested topics,
+    /// resources, projects). Deliberately distinct from RoadmapChat, which is Mentor's
+    /// conversational persona for discussing/nudging toward a roadmap (chat, free text).
+    /// </summary>
+    RoadmapGenerator,
+
+    /// <summary>
+    /// Mentor's conversational persona for career-goal / "what should I learn" conversations —
+    /// recognizes when a user is describing a learning goal and points them at the dedicated
+    /// Roadmap creation flow. Never generates the structured roadmap itself; see RoadmapGenerator.
+    /// </summary>
+    RoadmapChat,
 }

@@ -45,19 +45,39 @@ export default function RegisterPage() {
       >
         <div className="flex flex-col gap-2">
           <Label htmlFor="displayName">Name</Label>
-          <Input id="displayName" autoComplete="name" placeholder="Ada Lovelace" {...register("displayName")} />
+          <Input
+            id="displayName"
+            autoComplete="name"
+            placeholder="Ada Lovelace"
+            className="h-11 rounded-xl text-base"
+            {...register("displayName")}
+          />
           {errors.displayName && <p className="text-sm text-destructive">{errors.displayName.message}</p>}
         </div>
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...register("email")} />
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            className="h-11 rounded-xl text-base"
+            {...register("email")}
+          />
           {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" autoComplete="new-password" placeholder="At least 8 characters" {...register("password")} />
+          <Input
+            id="password"
+            type="password"
+            autoComplete="new-password"
+            placeholder="At least 8 characters"
+            className="h-11 rounded-xl text-base"
+            {...register("password")}
+          />
           {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
@@ -69,10 +89,25 @@ export default function RegisterPage() {
           </p>
         )}
 
-        <Button type="submit" size="lg" className="w-full" disabled={mutation.isPending}>
+        <Button type="submit" size="lg" className="h-11 w-full rounded-xl text-base" disabled={mutation.isPending}>
           {mutation.isPending ? "Creating account…" : "Create account"}
         </Button>
       </form>
+
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <span className="h-px flex-1 bg-border" />
+        or continue with
+        <span className="h-px flex-1 bg-border" />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Button type="button" variant="outline" className="h-11 rounded-xl" disabled title="Coming soon">
+          Google
+        </Button>
+        <Button type="button" variant="outline" className="h-11 rounded-xl" disabled title="Coming soon">
+          GitHub
+        </Button>
+      </div>
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}

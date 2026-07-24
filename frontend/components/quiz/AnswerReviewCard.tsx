@@ -6,13 +6,13 @@ import type { AnswerResult } from "@/lib/types/quiz";
 
 export function AnswerReviewCard({ answer, index }: { answer: AnswerResult; index: number }) {
   return (
-    <div className={cn("flex flex-col gap-3 rounded-xl border p-4", answer.isCorrect ? "border-primary/30 bg-primary/5" : "border-destructive/30 bg-destructive/5")}>
+    <div className={cn("glass flex flex-col gap-3 rounded-2xl border p-4", answer.isCorrect ? "border-success/30 bg-success/5" : "border-destructive/30 bg-destructive/5")}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2">
           <span
             className={cn(
               "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-white",
-              answer.isCorrect ? "bg-primary" : "bg-destructive",
+              answer.isCorrect ? "bg-success" : "bg-destructive",
             )}
           >
             {answer.isCorrect ? <Check className="size-3" /> : <X className="size-3" />}

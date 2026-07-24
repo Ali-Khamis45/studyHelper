@@ -14,14 +14,16 @@ export function QuestionCard({ question, value, onChange }: { question: Question
             type="button"
             onClick={() => onChange(option)}
             className={cn(
-              "flex items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-colors",
-              value === option ? "border-primary bg-primary/5 font-medium" : "border-border hover:bg-muted",
+              "flex items-center gap-3 rounded-2xl border px-4 py-3.5 text-left text-sm transition-all duration-200",
+              value === option
+                ? "border-transparent bg-gradient-brand font-medium text-primary-foreground shadow-glow-primary"
+                : "glass border-border hover:-translate-y-0.5 hover:border-primary/40",
             )}
           >
             <span
               className={cn(
-                "flex size-4 shrink-0 items-center justify-center rounded-full border",
-                value === option ? "border-primary bg-primary" : "border-muted-foreground/40",
+                "flex size-4 shrink-0 items-center justify-center rounded-full border-2",
+                value === option ? "border-primary-foreground" : "border-muted-foreground/40",
               )}
             >
               {value === option && <span className="size-1.5 rounded-full bg-primary-foreground" />}

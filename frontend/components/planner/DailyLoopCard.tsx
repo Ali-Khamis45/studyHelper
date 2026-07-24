@@ -56,12 +56,18 @@ export function DailyLoopCard({ recommendation }: { recommendation: PlannerRecom
   }
 
   return (
-    <Card>
+    <Card className="relative overflow-hidden">
+      <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-brand" aria-hidden="true" />
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
-          <div>
-            <CardTitle className="text-base">Today&apos;s focus</CardTitle>
-            <CardDescription>{recommendation.immediateNextAction}</CardDescription>
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-glow-primary">
+              <Sparkles className="size-4" />
+            </span>
+            <div>
+              <CardTitle className="text-base">Today&apos;s focus</CardTitle>
+              <CardDescription>{recommendation.immediateNextAction}</CardDescription>
+            </div>
           </div>
           <Button variant="outline" size="sm" onClick={() => stream.start()} disabled={stream.isStreaming}>
             <RefreshCw className={cn(stream.isStreaming && "animate-spin")} /> Regenerate

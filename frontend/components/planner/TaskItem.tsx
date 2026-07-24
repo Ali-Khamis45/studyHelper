@@ -16,6 +16,12 @@ const ENERGY_ICON: Record<EnergyLevel, typeof BatteryLow> = {
   High: BatteryFull,
 };
 
+const ENERGY_COLOR: Record<EnergyLevel, string> = {
+  Low: "text-sky-500",
+  Medium: "text-amber-500",
+  High: "text-rose-500",
+};
+
 export function TaskItem({ task }: { task: DailyTask }) {
   const [isRescheduling, setIsRescheduling] = useState(false);
   const [newDate, setNewDate] = useState(task.date);
@@ -27,7 +33,7 @@ export function TaskItem({ task }: { task: DailyTask }) {
   const isPending = task.status === "Pending";
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border p-3">
+    <div className="glass ring-glass flex flex-col gap-3 rounded-2xl border border-border p-4 transition-all duration-300 hover:-translate-y-0.5">
       <div className="flex flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">
           <p className={cn("text-sm font-medium", !isPending && "text-muted-foreground line-through")}>{task.title}</p>
@@ -42,7 +48,10 @@ export function TaskItem({ task }: { task: DailyTask }) {
             {task.estimatedMinutes} min
           </span>
           {task.energyLevel && (
-            <span className="flex items-center gap-1 text-xs text-muted-foreground" title={`${task.energyLevel} cognitive load`}>
+            <span
+              className={cn("flex items-center gap-1 text-xs font-medium", ENERGY_COLOR[task.energyLevel])}
+              title={`${task.energyLevel} cognitive load`}
+            >
               {(() => {
                 const EnergyIcon = ENERGY_ICON[task.energyLevel];
                 return <EnergyIcon className="size-3" />;

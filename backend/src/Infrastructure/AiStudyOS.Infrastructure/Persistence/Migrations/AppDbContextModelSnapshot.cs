@@ -954,6 +954,177 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                     b.ToTable("topic_mastery_history", (string)null);
                 });
 
+            modelBuilder.Entity("AiStudyOS.Domain.Roadmap.LearningRoadmap", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CareerGoal")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("career_goal");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("correlation_id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("difficulty");
+
+                    b.Property<int>("EstimatedWeeks")
+                        .HasColumnType("integer")
+                        .HasColumnName("estimated_weeks");
+
+                    b.Property<string>("ModelUsed")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("model_used");
+
+                    b.Property<string>("PromptVersion")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("prompt_version");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_learning_roadmaps");
+
+                    b.HasIndex("UserId", "UpdatedAtUtc")
+                        .HasDatabaseName("ix_learning_roadmaps_user_id_updated_at_utc");
+
+                    b.ToTable("learning_roadmaps", (string)null);
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Roadmap.RoadmapTopic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("difficulty");
+
+                    b.Property<double>("EstimatedHours")
+                        .HasColumnType("double precision")
+                        .HasColumnName("estimated_hours");
+
+                    b.Property<string>("LinkedMasteryTopic")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("linked_mastery_topic");
+
+                    b.Property<DateTime?>("ManuallyCompletedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("manually_completed_at_utc");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
+                    b.Property<Guid?>("ParentTopicId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parent_topic_id");
+
+                    b.Property<string>("PrerequisiteTopicIdsJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasDefaultValue("[]")
+                        .HasColumnName("prerequisite_topic_ids_json");
+
+                    b.Property<string>("ResourcesJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasDefaultValue("[]")
+                        .HasColumnName("resources_json");
+
+                    b.Property<Guid>("RoadmapId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("roadmap_id");
+
+                    b.Property<string>("SuggestedProjectsJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasDefaultValue("[]")
+                        .HasColumnName("suggested_projects_json");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.HasKey("Id")
+                        .HasName("pk_roadmap_topics");
+
+                    b.HasIndex("RoadmapId", "ParentTopicId", "Order")
+                        .HasDatabaseName("ix_roadmap_topics_roadmap_id_parent_topic_id_order");
+
+                    b.ToTable("roadmap_topics", (string)null);
+                });
+
             modelBuilder.Entity("AiStudyOS.Domain.Telemetry.AiTelemetryEvent", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1136,6 +1307,16 @@ namespace AiStudyOS.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_quiz_questions_quizzes_quiz_id");
+                });
+
+            modelBuilder.Entity("AiStudyOS.Domain.Roadmap.RoadmapTopic", b =>
+                {
+                    b.HasOne("AiStudyOS.Domain.Roadmap.LearningRoadmap", null)
+                        .WithMany()
+                        .HasForeignKey("RoadmapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_roadmap_topics_learning_roadmaps_roadmap_id");
                 });
 #pragma warning restore 612, 618
         }

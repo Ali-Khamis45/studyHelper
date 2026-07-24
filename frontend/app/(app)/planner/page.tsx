@@ -1,6 +1,5 @@
 "use client";
 
-import { AiStatusBadge } from "@/components/planner/AiStatusBadge";
 import { DailyLoopCard } from "@/components/planner/DailyLoopCard";
 import { GoalProgressList } from "@/components/planner/GoalProgressList";
 import { OverdueTasksCard } from "@/components/planner/OverdueTasksCard";
@@ -20,14 +19,11 @@ export default function PlannerPage() {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Study Planner</h1>
-          <p className="text-muted-foreground">
-            {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
-          </p>
-        </div>
-        <AiStatusBadge />
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Study Planner</h1>
+        <p className="text-muted-foreground">
+          {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
+        </p>
       </div>
 
       {planLoading && (

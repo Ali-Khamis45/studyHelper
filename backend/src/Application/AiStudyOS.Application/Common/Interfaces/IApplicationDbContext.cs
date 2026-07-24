@@ -4,6 +4,7 @@ using AiStudyOS.Domain.Identity;
 using AiStudyOS.Domain.Mentor;
 using AiStudyOS.Domain.Planner;
 using AiStudyOS.Domain.Quiz;
+using AiStudyOS.Domain.Roadmap;
 using AiStudyOS.Domain.Telemetry;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,8 @@ public interface IApplicationDbContext
     DbSet<TopicMastery> TopicMasteries { get; }
     DbSet<TopicMasteryHistory> TopicMasteryHistories { get; }
     DbSet<AnalyticsInsight> AnalyticsInsights { get; }
+    DbSet<LearningRoadmap> LearningRoadmaps { get; }
+    DbSet<RoadmapTopic> RoadmapTopics { get; }
 
     Task<int> SaveChangesAsync(CancellationToken ct);
 }
